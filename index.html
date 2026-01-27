@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Our Story 💗</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: #f8c8dc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.screen {
+  display: none;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 600px;
+}
+
+.active {
+  display: flex;
+}
+
+button {
+  padding: 12px 24px;
+  border-radius: 30px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.answer {
+  background: white;
+  color: #b03060;
+  font-weight: bold;
+}
+
+img {
+  max-width: 250px;
+  border-radius: 12px;
+}
+
+.progress {
+  font-size: 0.9rem;
+  color: #6a1b4d;
+}
+
+.end-container {
+  display: flex;
+  gap: 20px;
+}
+
+.column {
+  width: 200px;
+  text-align: left;
+  font-size: 0.9rem;
+}
+</style>
+</head>
+
+<body>
+
+<div id="game" class="screen active">
+  <div class="progress" id="progress"></div>
+  <h2 id="question"></h2>
+  <div id="answers"></div>
+</div>
+
+<div id="feedback" class="screen">
+  <p id="feedbackText"></p>
+  <button onclick="continueAfterFeedback()">Continue</button>
+</div>
+
+<div id="end" class="screen">
+  <h2>Congratulations Talya! 💗</h2>
+
+  <div class="end-container">
+    <div class="column">
+      <h3>Vouchers Won</h3>
+      <ul id="won"></ul>
+    </div>
+
+    <div>
+      <p>
+        You've finished the journey through our relationship!  
+        I have no idea what score you've gotten, but knowing your memory
+        I’ll bet it’s not very high…
+        <br><br>
+        But what matters is that we have these memories together,
+        and I can’t wait to keep making more.
+        <br><br>
+        See you on Valentine’s Day 💗
+      </p>
+    </div>
+
+    <div class="column">
+      <h3>Vouchers Missed</h3>
+      <ul id="missed"></ul>
+    </div>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "Why did we leave the Palmer Park funfair later than planned?",
+    answers: [
+      "Josh lost his phone",
+      "Sean dropped his glasses",
+      "Henry and Mihai were making out in the bathroom"
+    ],
+    correct: ["Josh lost his phone"],
+    reward: "“erm..bye…” – instant go home voucher"
+  },
+  {
+    q: "What were we originally meant to do on our first date?",
+    answers: ["Go to the circus", "Watch fireworks", "Attend a show"],
+    correct: ["Go to the circus"],
+    reward: "“scrap the plan” – cancel plans voucher"
+  },
+  {
+    q: "How late was it when you left on bonfire night?",
+    answers: ["6:45am", "4am", "11pm"],
+    correct: ["6:45am"],
+    reward: "“honk mimimi” – lie-in voucher"
+  },
+  {
+    q: "Why did I get mad about Pierce’s theatre performance?",
+    answers: [
+      "He gave me the wrong time",
+      "I didn’t have a ticket",
+      "I fell over on the way"
+    ],
+    correct: ["He gave me the wrong time"],
+    reward: "“my bad…” – punish me voucher"
+  },
+  {
+    q: "What did we do during the day before our first sleepover?",
+    answers: [
+      "Went to London to watch Look Back",
+      "Went to Comic Con",
+      "Went to Mojos"
+    ],
+    correct: ["Went to London to watch Look Back"],
+    reward: "“sleepover, now!” – instant visit voucher"
+  },
+  {
+    q: "What did we do on our first double date?",
+    answers: [
+      "Saw the Christmas lights switch on",
+      "Got coffee",
+      "Watched a movie"
+    ],
+    correct: ["Saw the Christmas lights switch on"],
+    reward: "“lights up” – stay up all night voucher"
+  },
+  {
+    q: "What did we do before ice skating in London?",
+    answers: [
+      "Visited the Covent Garden Christmas tree & market",
+      "Went shopping",
+      "Overslept"
+    ],
+    correct: ["Visited the Covent Garden Christmas tree & market"],
+    reward: "“and action” – goof-off challenge"
+  },
+  {
+    q: "When did we first say ‘I love you’?",
+    answers: [
+      "December 17th",
+      "November 28th",
+      "December 12th",
+      "December 16th"
+    ],
+    correct: ["December 17th"],
+    reward: "“I love you, again” – soppy moment voucher",
+    retryExplanations: {
+      "November 28th": "That’s the day I knew I loved you… and almost said it while drunk 💗",
+      "December 12th": "That’s the day I almost said it sober 😅",
+      "December 16th": "That’s the day you almost said it 💞"
+    }
+  },
+  {
+    q: "Why did last Valentine’s Day start badly?",
+    answers: [
+      "I was sneezing all morning",
+      "I lost your gift",
+      "We missed our train"
+    ],
+    correct: ["I was sneezing all morning"],
+    reward: "“it could always be worse” – tickle voucher"
+  },
+  {
+    q: "What gift did I get for saving your life on my birthday?",
+    answers: [
+      "A jet lighter",
+      "A pack of cigarettes",
+      "A box of chocolates"
+    ],
+    correct: ["A jet lighter"],
+    reward: "“care package” – delivered surprise"
+  },
+  {
+    q: "What was the first meal we cooked together?",
+    answers: ["Salmon", "Chicken", "Mince beef"],
+    correct: ["Salmon"],
+    reward: "“chef’s choice” – dinner voucher"
+  },
+  {
+    q: "Where did we go for dessert after you met my sister?",
+    answers: ["Black Tap", "Amorino", "Creams"],
+    correct: ["Black Tap"],
+    reward: "“baker’s choice” – dessert voucher"
+  },
+  {
+    q: "Who won mini golf on our 6-month anniversary?",
+    answers: ["Both of us", "Me", "You"],
+    correct: ["Both of us"],
+    reward: "“I win.” – guaranteed win voucher"
+  },
+  {
+    q: "Which birthday view was your favourite?",
+    answers: [
+      "Breakfast view",
+      "Rooftop cinema",
+      "Royal Albert Hall"
+    ],
+    correct: [
+      "Breakfast view",
+      "Rooftop cinema",
+      "Royal Albert Hall"
+    ],
+    reward: "“the best view is you” – long-distance dinner"
+  },
+  {
+    q: "Who was the Bridgerton statue in Brighton?",
+    answers: ["George IV", "Queen Charlotte", "George III"],
+    correct: ["George IV"],
+    reward: "“you should see me in a crown” – Queen for an hour"
+  },
+  {
+    q: "How many times did we go to Black Sheep?",
+    answers: ["87", "102", "65"],
+    correct: ["87"],
+    reward: "“breakfast time” – breakfast in bed"
+  },
+  {
+    q: "What happened on July 21st?",
+    answers: [
+      "You asked me for an NSFW picture",
+      "We had a fight",
+      "I broke my glasses"
+    ],
+    correct: ["You asked me for an NSFW picture"],
+    reward: "🔥 voucher"
+  },
+  {
+    q: "What was the first karaoke song we sang?",
+    answers: ["Espresso", "Shake It Off", "Enemy"],
+    correct: ["Espresso"],
+    reward: "“throwback challenge”"
+  },
+  {
+    q: "Why did we go to bed early on Nov 24th?",
+    answers: [
+      "We passed out during a back massage",
+      "Watching Love Island",
+      "Eating dinner"
+    ],
+    correct: ["We passed out during a back massage"],
+    reward: "“my back hurts” – massage voucher"
+  },
+  {
+    q: "What are we?",
+    answers: ["The best!", "The best!", "The best!"],
+    correct: ["The best!"],
+    reward: "“best couple perks” – anything voucher"
+  }
+];
+
+let index = 0;
+let won = [];
+let missed = [];
+let retrySameQuestion = false;
+
+function loadQuestion() {
+  const q = questions[index];
+  document.getElementById("progress").innerText =
+    `Memory ${index + 1} of ${questions.length} 💗`;
+
+  document.getElementById("question").innerText = q.q;
+  const answersDiv = document.getElementById("answers");
+  answersDiv.innerHTML = "";
+
+  q.answers.forEach(a => {
+    const btn = document.createElement("button");
+    btn.className = "answer";
+    btn.innerText = a;
+    btn.onclick = () => answer(a);
+    answersDiv.appendChild(btn);
+  });
+}
+
+function answer(choice) {
+  const q = questions[index];
+
+  if (q.retryExplanations && q.retryExplanations[choice]) {
+    retrySameQuestion = true;
+    showFeedback(q.retryExplanations[choice]);
+    return;
+  }
+
+  if (q.correct.includes(choice)) {
+    won.push(q.reward);
+    retrySameQuestion = false;
+    showFeedback(`Correct! You won: ${q.reward}`);
+  } else {
+    missed.push(q.reward);
+    retrySameQuestion = false;
+    showFeedback("Wrong! 😈");
+  }
+}
+
+function showFeedback(text) {
+  document.getElementById("game").classList.remove("active");
+  document.getElementById("feedback").classList.add("active");
+  document.getElementById("feedbackText").innerText = text;
+}
+
+function continueAfterFeedback() {
+  document.getElementById("feedback").classList.remove("active");
+
+  if (!retrySameQuestion) index++;
+
+  if (index >= questions.length) {
+    document.getElementById("end").classList.add("active");
+    won.forEach(v => document.getElementById("won").innerHTML += `<li>${v}</li>`);
+    missed.forEach(v => document.getElementById("missed").innerHTML += `<li>${v}</li>`);
+  } else {
+    document.getElementById("game").classList.add("active");
+    loadQuestion();
+  }
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
