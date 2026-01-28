@@ -62,6 +62,62 @@ img {
   text-align: left;
   font-size: 0.9rem;
 }
+
+/* Voucher animation */
+#voucher {
+  display: none;
+  padding: 40px;
+  border-radius: 20px;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  transform: scale(0);
+  background: linear-gradient(135deg, #ff4da6, #ff66c4);
+  position: relative;
+  overflow: hidden;
+  animation-fill-mode: forwards;
+}
+
+/* Sparkle animation */
+.sparkle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: sparkle-fall 1s linear forwards;
+}
+
+@keyframes sparkle-fall {
+  0% { transform: translate(0,0) scale(0); opacity: 1; }
+  50% { transform: translate(var(--x), var(--y)) scale(1.5); opacity: 1; }
+  100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
+}
+
+/* Voucher pop animation */
+@keyframes voucher-pop {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.2); }
+  80% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+/* Confetti pieces */
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  opacity: 0.8;
+  pointer-events: none;
+  animation: confetti-fall 1.5s linear forwards;
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(300px) rotate(360deg); opacity: 0; }
+}
 </style>
 </head>
 
@@ -88,6 +144,9 @@ img {
 
 <!-- FEEDBACK SCREEN -->
 <div id="feedback" class="screen">
+  <div id="voucher">
+    <p id="voucherText"></p>
+  </div>
   <img id="feedbackImage" src="" alt="" style="display:none;">
   <p id="feedbackText"></p>
   <button type="button" onclick="continueAfterFeedback()">Continue</button>
@@ -124,7 +183,7 @@ img {
 </div>
 
 <script>
-const questions = [ /* ⬅️ unchanged question data */ 
+const questions = [ /* ⬅️ same question data as you sent */ ];
   {
     q: "One of the first times we hung out was when we went to the funfair at Palmer Park! But do you remember why we ended up leaving later than planned?",
     answers: [
@@ -390,32 +449,72 @@ function answer(choice) {
 
   if (q.retryExplanations && q.retryExplanations[choice]) {
     retrySameQuestion = true;
-    showFeedback(q.retryExplanations[choice], q.feedbackImage);
+    showFeedback(q.retryExplanations[choice], q.feedbackImage, false);
     return;
   }
 
   if (q.correct.includes(choice)) {
     won.push(q.reward);
     retrySameQuestion = false;
-    showFeedback(`Correct! You won: ${q.reward}`, q.feedbackImage);
+    showFeedback(q.reward, null, true);
   } else {
     missed.push(q.reward);
     retrySameQuestion = false;
-    showFeedback("Wrong...", q.feedbackImage);
+    showFeedback("Wrong...", q.feedbackImage, false);
   }
 }
 
-function showFeedback(text, image) {
+function showFeedback(text, image=false, correct=false) {
   document.getElementById("game").classList.remove("active");
   document.getElementById("feedback").classList.add("active");
-  document.getElementById("feedbackText").innerText = text;
 
   const img = document.getElementById("feedbackImage");
-  if (image) {
-    img.src = image;
-    img.style.display = "block";
-  } else {
+  const voucher = document.getElementById("voucher");
+  const voucherText = document.getElementById("voucherText");
+  const feedbackText = document.getElementById("feedbackText");
+
+  if(correct){
+    // Show voucher pop
     img.style.display = "none";
+    feedbackText.style.display = "none";
+
+    voucherText.innerText = text;
+    voucher.style.display = "block";
+    voucher.style.animation = "voucher-pop 0.6s ease forwards";
+
+    // Sparkles
+    for(let i=0;i<10;i++){
+      const sparkle = document.createElement("div");
+      sparkle.classList.add("sparkle");
+      sparkle.style.left = Math.random()*100 + "%";
+      sparkle.style.top = Math.random()*100 + "%";
+      sparkle.style.setProperty('--x', (Math.random()*200-100) + "px");
+      sparkle.style.setProperty('--y', (Math.random()*200-100) + "px");
+      voucher.appendChild(sparkle);
+      setTimeout(()=>sparkle.remove(), 1000);
+    }
+
+    // Confetti
+    for(let i=0;i<20;i++){
+      const confetti = document.createElement("div");
+      confetti.classList.add("confetti-piece");
+      confetti.style.left = Math.random() * window.innerWidth + "px";
+      confetti.style.backgroundColor = `hsl(${Math.random()*360}, 70%, 70%)`;
+      document.body.appendChild(confetti);
+      setTimeout(()=>confetti.remove(), 1500);
+    }
+
+  } else {
+    // Wrong answer feedback
+    if(image){
+      img.src = image;
+      img.style.display = "block";
+    } else {
+      img.style.display = "none";
+    }
+    voucher.style.display = "none";
+    feedbackText.style.display = "block";
+    feedbackText.innerText = text;
   }
 }
 
@@ -441,6 +540,7 @@ function continueAfterFeedback() {
     loadQuestion();
   }
 }
+
 document.getElementById("startButton").addEventListener("click", startGame);
 </script>
 
