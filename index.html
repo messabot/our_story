@@ -597,20 +597,36 @@ function continueAfterFeedback(){
 }
 
 // --- EMAILJS FUNCTION ---
-function sendResults(){
+function sendResults() {
   const subject = "Talya's Quiz Results 💌";
+  
+  // Format the questions she got right
+  const rightAnswers = won.length
+    ? won.map((v, i) => `${i + 1}. ${v}`).join("\n")
+    : "None! 😅";
+
+  // Format the questions she missed
+  const wrongAnswers = missed.length
+    ? missed.map((v, i) => `${i + 1}. ${v}`).join("\n")
+    : "None! 🎉";
+
   const message = `
 Talya finished the quiz!
-Questions she got right: ${won.length}
-${won.map((v,i)=> `${i+1}. ${v}`).join("\n")}
 
-Questions she missed: ${missed.length}
-${missed.map((v,i)=> `${i+1}. ${v}`).join("\n")}
+✅ Questions she got RIGHT (${won.length}):
+${rightAnswers}
+
+❌ Questions she got WRONG (${missed.length}):
+${wrongAnswers}
 `;
 
-  emailjs.send("service_u1rr6f4","template_pjg3tc8",{subject:subject,message:message})
-    .then(res=>console.log("Email sent!", res.status, res.text))
-    .catch(err=>console.log("Failed to send email:", err));
+  // Send email using EmailJS (make sure your template has quiz_subject & quiz_message)
+  emailjs.send("service_u1rr6f4", "template_pjg3tc8", {
+    quiz_subject: subject,
+    quiz_message: message
+  })
+  .then(res => console.log("Email sent!", res.status, res.text))
+  .catch(err => console.log("Failed to send email:", err));
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
