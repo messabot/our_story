@@ -509,13 +509,13 @@ function answer(choice) {
     showFeedback(q.retryExplanations[choice], q.feedbackImage, false);
     return;
   }
-  if(q.correct.includes(choice)){
-    won.push(q.reward);
-    retrySameQuestion=false;
+if (q.correct.includes(choice)) {
+    won.push(`${q.q} → ${q.reward}`);
+    retrySameQuestion = false;
     showFeedback(q.reward, null, true);
-  } else {
-    missed.push(q.reward);
-    retrySameQuestion=false;
+} else {
+    missed.push(`${q.q} → ${q.reward}`);
+    retrySameQuestion = false;
     showFeedback("Wrong...", q.feedbackImage, false);
   }
 }
