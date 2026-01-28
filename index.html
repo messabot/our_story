@@ -183,6 +183,14 @@ img {
 
 <body>
 
+<!-- EmailJS -->
+<script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script type="text/javascript">
+   (function(){
+      emailjs.init("lfBihHcp3KqNzmjnL"); // your public key
+   })();
+</script>
+
 <!-- INTRO SCREEN -->
 <div id="intro" class="screen active">
   <h1>💗 Valen-time To Remember 💗</h1>
@@ -226,13 +234,10 @@ img {
       <p>
         You've finished the journey through (some of) our relationship!  
         I have no idea what score you've gotten, but knowing your memory
-        I’ll bet it’s not very high…
-        <br><br>
+        I’ll bet it’s not very high…<br><br>
         But what matters is that we have these memories together,
-        and I can’t wait to keep making more.
-        <br><br>
-        See you on Valentine’s Day 💗
-        <br><br>
+        and I can’t wait to keep making more.<br><br>
+        See you on Valentine’s Day 💗<br><br>
         And remember to make note of which vouchers you've won! no cheating...
       </p>
     </div>
@@ -466,10 +471,9 @@ let missed = [];
 let retrySameQuestion = false;
 
 function shuffle(array) {
-  return array
-    .map(value => ({ value, sort: Math.random() }))
-    .sort((a, b) => a.sort - b.sort)
-    .map(({ value }) => value);
+  return array.map(value => ({ value, sort: Math.random() }))
+              .sort((a,b) => a.sort - b.sort)
+              .map(({value}) => value);
 }
 
 function startGame() {
@@ -480,140 +484,137 @@ function startGame() {
 
 function loadQuestion() {
   const q = questions[index];
-
-  document.getElementById("progress").innerText =
-    `Memory ${index + 1} of ${questions.length} 💗`;
-
+  document.getElementById("progress").innerText = `Memory ${index + 1} of ${questions.length} 💗`;
   document.getElementById("question").innerText = q.q;
 
   const qImg = document.getElementById("questionImage");
-  if (q.image) {
-    qImg.src = q.image;
-    qImg.style.display = "block";
-  } else {
-    qImg.style.display = "none";
-  }
+  if(q.image){ qImg.src=q.image; qImg.style.display="block"; }
+  else { qImg.style.display="none"; }
 
   const answersDiv = document.getElementById("answers");
-  answersDiv.innerHTML = "";
-
-  shuffle(q.answers).forEach(a => {
-    const btn = document.createElement("button");
-    btn.className = "answer";
-    btn.innerText = a;
-    btn.onclick = () => answer(a);
+  answersDiv.innerHTML="";
+  shuffle(q.answers).forEach(a=>{
+    const btn=document.createElement("button");
+    btn.className="answer";
+    btn.innerText=a;
+    btn.onclick=()=>answer(a);
     answersDiv.appendChild(btn);
   });
 }
 
 function answer(choice) {
   const q = questions[index];
-
-  if (q.retryExplanations && q.retryExplanations[choice]) {
-    retrySameQuestion = true;
+  if(q.retryExplanations && q.retryExplanations[choice]){
+    retrySameQuestion=true;
     showFeedback(q.retryExplanations[choice], q.feedbackImage, false);
     return;
   }
-
-  if (q.correct.includes(choice)) {
+  if(q.correct.includes(choice)){
     won.push(q.reward);
-    retrySameQuestion = false;
+    retrySameQuestion=false;
     showFeedback(q.reward, null, true);
   } else {
     missed.push(q.reward);
-    retrySameQuestion = false;
+    retrySameQuestion=false;
     showFeedback("Wrong...", q.feedbackImage, false);
   }
 }
 
-function showFeedback(text, image=false, correct=false) {
+function showFeedback(text, image=false, correct=false){
   document.getElementById("game").classList.remove("active");
   document.getElementById("feedback").classList.add("active");
-
-  const img = document.getElementById("feedbackImage");
-  const voucher = document.getElementById("voucher");
-  const voucherText = document.getElementById("voucherText");
-  const feedbackText = document.getElementById("feedbackText");
+  const img=document.getElementById("feedbackImage");
+  const voucher=document.getElementById("voucher");
+  const voucherText=document.getElementById("voucherText");
+  const feedbackText=document.getElementById("feedbackText");
 
   if(correct){
-    img.style.display = "none";
-    feedbackText.style.display = "none";
-
-    voucherText.innerText = text;
-    voucher.style.display = "block";
-    voucher.style.animation = "voucher-pop 0.6s ease forwards";
+    img.style.display="none";
+    feedbackText.style.display="none";
+    voucherText.innerText=text;
+    voucher.style.display="block";
+    voucher.style.animation="voucher-pop 0.6s ease forwards";
 
     for(let i=0;i<10;i++){
-      const sparkle = document.createElement("div");
+      const sparkle=document.createElement("div");
       sparkle.classList.add("sparkle");
-      sparkle.style.left = Math.random()*100 + "%";
-      sparkle.style.top = Math.random()*100 + "%";
-      sparkle.style.setProperty('--x', (Math.random()*200-100) + "px");
-      sparkle.style.setProperty('--y', (Math.random()*200-100) + "px");
+      sparkle.style.left=Math.random()*100+"%";
+      sparkle.style.top=Math.random()*100+"%";
+      sparkle.style.setProperty('--x',(Math.random()*200-100)+"px");
+      sparkle.style.setProperty('--y',(Math.random()*200-100)+"px");
       voucher.appendChild(sparkle);
-      setTimeout(()=>sparkle.remove(), 1000);
+      setTimeout(()=>sparkle.remove(),1000);
     }
 
     for(let i=0;i<20;i++){
-      const confetti = document.createElement("div");
+      const confetti=document.createElement("div");
       confetti.classList.add("confetti-piece");
-      confetti.style.left = Math.random() * window.innerWidth + "px";
-      confetti.style.backgroundColor = `hsl(${Math.random()*360}, 70%, 70%)`;
+      confetti.style.left=Math.random()*window.innerWidth+"px";
+      confetti.style.backgroundColor=`hsl(${Math.random()*360}, 70%, 70%)`;
       document.body.appendChild(confetti);
-      setTimeout(()=>confetti.remove(), 1500);
+      setTimeout(()=>confetti.remove(),1500);
     }
-
   } else {
-    if(image){
-      img.src = image;
-      img.style.display = "block";
-    } else {
-      img.style.display = "none";
-    }
-    voucher.style.display = "none";
-    feedbackText.style.display = "block";
-    feedbackText.innerText = text;
+    if(image){ img.src=image; img.style.display="block"; } 
+    else { img.style.display="none"; }
+    voucher.style.display="none";
+    feedbackText.style.display="block";
+    feedbackText.innerText=text;
   }
 }
 
-function continueAfterFeedback() {
+function continueAfterFeedback(){
   document.getElementById("feedback").classList.remove("active");
-
-  if (!retrySameQuestion) index++;
-
-  if (index >= questions.length) {
+  if(!retrySameQuestion) index++;
+  if(index>=questions.length){
     document.getElementById("end").classList.add("active");
-
-    // Display won vouchers as cards
-    const wonDiv = document.getElementById("won");
-    won.forEach(v => {
-      const card = document.createElement("div");
-      card.className = "voucher-card";
-      const [title] = v.split("-").map(s => s.trim());
-      card.innerText = title;
-      card.setAttribute("data-full", v);
+    // Vouchers won
+    const wonDiv=document.getElementById("won");
+    won.forEach(v=>{
+      const card=document.createElement("div");
+      card.className="voucher-card";
+      const [title]=v.split("-").map(s=>s.trim());
+      card.innerText=title;
+      card.setAttribute("data-full",v);
       wonDiv.appendChild(card);
     });
-
-    // Display missed vouchers as cards
-    const missedDiv = document.getElementById("missed");
-    missed.forEach(v => {
-      const card = document.createElement("div");
-      card.className = "voucher-card";
-      const [title] = v.split("-").map(s => s.trim());
-      card.innerText = title;
-      card.setAttribute("data-full", v);
+    // Vouchers missed
+    const missedDiv=document.getElementById("missed");
+    missed.forEach(v=>{
+      const card=document.createElement("div");
+      card.className="voucher-card";
+      const [title]=v.split("-").map(s=>s.trim());
+      card.innerText=title;
+      card.setAttribute("data-full",v);
       missedDiv.appendChild(card);
     });
-
+    // Send email with results
+    sendResults();
   } else {
     document.getElementById("game").classList.add("active");
     loadQuestion();
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("startButton").addEventListener("click", startGame);
+// --- EMAILJS FUNCTION ---
+function sendResults(){
+  const subject = "Talya's Quiz Results 💌";
+  const message = `
+Talya finished the quiz!
+Questions she got right: ${won.length}
+${won.map((v,i)=> `${i+1}. ${v}`).join("\n")}
+
+Questions she missed: ${missed.length}
+${missed.map((v,i)=> `${i+1}. ${v}`).join("\n")}
+`;
+
+  emailjs.send("service_u1rr6f4","template_pjg3tc8",{subject:subject,message:message})
+    .then(res=>console.log("Email sent!", res.status, res.text))
+    .catch(err=>console.log("Failed to send email:", err));
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("startButton").addEventListener("click",startGame);
 });
 </script>
 
