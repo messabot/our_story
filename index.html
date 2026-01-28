@@ -75,7 +75,7 @@ img {
     Answer these questions to receive your first set of Valentine’s gifts,
     and to be reminded just how amazing we are!
   </p>
-  <button type="button" onclick="startGame()">Click me</button>
+  <button type="button" id="startButton">Click me</button>
 </div>
 
 <!-- GAME SCREEN -->
@@ -441,6 +441,7 @@ function continueAfterFeedback() {
     loadQuestion();
   }
 }
+document.getElementById("startButton").addEventListener("click", startGame);
 </script>
 
 </body>
