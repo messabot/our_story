@@ -541,7 +541,9 @@ function continueAfterFeedback() {
   }
 }
 
-document.getElementById("startButton").addEventListener("click", startGame);
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("startButton").addEventListener("click", startGame);
+});
 </script>
 
 </body>
