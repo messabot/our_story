@@ -63,6 +63,66 @@ img {
   font-size: 0.9rem;
 }
 
+/* Voucher card styles */
+.voucher-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.voucher-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  flex: 1 1 140px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  text-align: center;
+  color: #b03060;
+  font-weight: bold;
+  cursor: default;
+  transition: transform 0.2s;
+  position: relative;
+}
+
+/* Tooltip for full reward text */
+.voucher-card:hover::after {
+  content: attr(data-full);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.95);
+  color: #b03060;
+  font-weight: normal;
+  font-size: 0.8rem;
+  padding: 6px;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  width: 180px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+
+.voucher-card:hover::before {
+  content: "";
+  position: absolute;
+  bottom: 115%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(255,255,255,0.95) transparent transparent transparent;
+  z-index: 10;
+}
+
+.voucher-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
 /* Voucher animation */
 #voucher {
   display: none;
@@ -159,7 +219,7 @@ img {
   <div class="end-container">
     <div class="column">
       <h3>Vouchers Won</h3>
-      <ul id="won"></ul>
+      <div id="won" class="voucher-grid"></div>
     </div>
 
     <div>
@@ -177,7 +237,7 @@ img {
 
     <div class="column">
       <h3>Vouchers Missed</h3>
-      <ul id="missed"></ul>
+      <div id="missed" class="voucher-grid"></div>
     </div>
   </div>
 </div>
@@ -474,7 +534,6 @@ function showFeedback(text, image=false, correct=false) {
   const feedbackText = document.getElementById("feedbackText");
 
   if(correct){
-    // Show voucher pop
     img.style.display = "none";
     feedbackText.style.display = "none";
 
@@ -482,7 +541,6 @@ function showFeedback(text, image=false, correct=false) {
     voucher.style.display = "block";
     voucher.style.animation = "voucher-pop 0.6s ease forwards";
 
-    // Sparkles
     for(let i=0;i<10;i++){
       const sparkle = document.createElement("div");
       sparkle.classList.add("sparkle");
@@ -494,7 +552,6 @@ function showFeedback(text, image=false, correct=false) {
       setTimeout(()=>sparkle.remove(), 1000);
     }
 
-    // Confetti
     for(let i=0;i<20;i++){
       const confetti = document.createElement("div");
       confetti.classList.add("confetti-piece");
@@ -505,7 +562,6 @@ function showFeedback(text, image=false, correct=false) {
     }
 
   } else {
-    // Wrong answer feedback
     if(image){
       img.src = image;
       img.style.display = "block";
@@ -526,15 +582,28 @@ function continueAfterFeedback() {
   if (index >= questions.length) {
     document.getElementById("end").classList.add("active");
 
+    // Display won vouchers as cards
+    const wonDiv = document.getElementById("won");
     won.forEach(v => {
-      const title = v.split("–")[0].trim();
-      document.getElementById("won").innerHTML += `<li>${title}</li>`;
+      const card = document.createElement("div");
+      card.className = "voucher-card";
+      const [title] = v.split("-").map(s => s.trim());
+      card.innerText = title;
+      card.setAttribute("data-full", v);
+      wonDiv.appendChild(card);
     });
 
+    // Display missed vouchers as cards
+    const missedDiv = document.getElementById("missed");
     missed.forEach(v => {
-      const title = v.split("–")[0].trim();
-      document.getElementById("missed").innerHTML += `<li>${title}</li>`;
+      const card = document.createElement("div");
+      card.className = "voucher-card";
+      const [title] = v.split("-").map(s => s.trim());
+      card.innerText = title;
+      card.setAttribute("data-full", v);
+      missedDiv.appendChild(card);
     });
+
   } else {
     document.getElementById("game").classList.add("active");
     loadQuestion();
