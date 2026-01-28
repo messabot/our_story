@@ -44,6 +44,7 @@ button {
 img {
   max-width: 250px;
   border-radius: 12px;
+  margin: 0 auto;
 }
 
 .progress {
@@ -68,7 +69,7 @@ img {
 
 <!-- INTRO SCREEN -->
 <div id="intro" class="screen active">
-  <h1>💗 Valentime's To Remember 💗</h1>
+  <h1>💗 Valen-time To Remember 💗</h1>
   <p>
     Time for a trip down memory lane!<br><br>
     Answer these questions to receive your first set of Valentine’s gifts,
@@ -81,11 +82,13 @@ img {
 <div id="game" class="screen">
   <div class="progress" id="progress"></div>
   <h2 id="question"></h2>
+  <img id="questionImage" src="" alt="" style="display:none;">
   <div id="answers"></div>
 </div>
 
 <!-- FEEDBACK SCREEN -->
 <div id="feedback" class="screen">
+  <img id="feedbackImage" src="" alt="" style="display:none;">
   <p id="feedbackText"></p>
   <button type="button" onclick="continueAfterFeedback()">Continue</button>
 </div>
@@ -123,7 +126,7 @@ img {
 <script>
 const questions = [ /* ⬅️ unchanged question data */ 
   {
-    q: "Why did we leave the Palmer Park funfair later than planned?",
+    q: "One of the first times we hung out was when we went to the funfair at Palmer Park! But do you remember why we ended up leaving later than planned?",
     answers: [
       "Josh lost his phone",
       "Sean dropped his glasses",
@@ -131,21 +134,27 @@ const questions = [ /* ⬅️ unchanged question data */
     ],
     correct: ["Josh lost his phone"],
     reward: "“erm..bye…” – redeem this and we'll drop everything, no matter where we are or who we're with, and go home immediately"
+    image: "",
+    feedbackImage: ""  
   },
   {
-    q: "What were we originally meant to do on our first date?",
-    answers: ["Go to the circus", "Watch fireworks", "Attend a show"],
+    q: "On our first date, things didn't quite end up going to plan! We spent our time talking on a bench, and I explained why I liked you! But do you remember what we were originally meant to do?",
+    answers: ["Go to the circus", "Watch fireworks", "Go to a concert"],
     correct: ["Go to the circus"],
     reward: "“scrap the plan” – redeem this and we'll cancel any plans we might have and do anything else of your choosing instead"
+    image: "",
+    feedbackImage: ""
   },
   {
-    q: "How late was it when you left on bonfire night?",
+    q: "On bonfire night, after we set off the fireworks, everyone came back to my place, but you ended up staying really late for, uh, reasons... But do you remember how late it was when you left? ",
     answers: ["6:45am", "4am", "11pm"],
     correct: ["6:45am"],
     reward: "“honk mimimi” – redeem this and we switch off all of our alarms and have a lie in"
+    image: "",
+    feedbackImage: ""
   },
   {
-    q: "Why did I get mad about Pierce’s theatre performance?",
+    q: "I came over to yours once for us to chill but ended up rushing out after an hour because Pierce asked me to come to his theatre performance. Do you remember why I got so mad though?",
     answers: [
       "He gave me the wrong time",
       "I didn’t have a ticket",
@@ -153,9 +162,11 @@ const questions = [ /* ⬅️ unchanged question data */
     ],
     correct: ["He gave me the wrong time"],
     reward: "“my bad…” – redeem to inflict a punishment of choice on me - just nothing too crazy please!"
+    image: "",
+    feedbackImage: ""
   },
   {
-    q: "What did we do during the day before our first sleepover?",
+    q: "The first time we had a sleepover was pretty early on! Do you remember what we were during the day before that though?",
     answers: [
       "Went to London to watch Look Back",
       "Went to Comic Con",
@@ -163,9 +174,11 @@ const questions = [ /* ⬅️ unchanged question data */
     ],
     correct: ["Went to London to watch Look Back"],
     reward: "“sleepover, now!” – redeem for me to come and visit immediately, no questions asked"
+    image: "",
+    feedbackImage: ""
   },
   {
-    q: "What did we do on our first double date?",
+    q: "We had our first double date with Mihai and Mollie in late November - what did we do?",
     answers: [
       "Saw the Christmas lights switch on",
       "Got coffee",
@@ -173,9 +186,11 @@ const questions = [ /* ⬅️ unchanged question data */
     ],
     correct: ["Saw the Christmas lights switch on"],
     reward: "“lights up” – redeem for one night of us staying up until the sun rises!"
+    image: "",
+    feedbackImage: ""
   },
   {
-    q: "What did we do before ice skating in London?",
+    q: "Our first big date in London was so much fun. We went ice skating and had an amazing dinner afterwards. Do you remember what we did before that though?",
     answers: [
       "Visited the Covent Garden Christmas tree & market",
       "Went shopping",
@@ -183,9 +198,11 @@ const questions = [ /* ⬅️ unchanged question data */
     ],
     correct: ["Visited the Covent Garden Christmas tree & market"],
     reward: "“and action” – redeem for a session of goofing off! we do something, or you ask me to do something, super funny or embarrassing and we do it!"
+    image: "",
+    feedbackImage: ""  
   },
   {
-    q: "When did we first say ‘I love you’?",
+    q: "An easy one for you! What day did we say we love each other for the first time?",
     answers: [
       "December 17th",
       "November 28th",
@@ -194,6 +211,7 @@ const questions = [ /* ⬅️ unchanged question data */
     ],
     correct: ["December 17th"],
     reward: "“I love you, again” – redeem for a moment of soppiness - a declaration of love, a love letter, a list of everything i love about you, anything you'd like",
+    image: "",
     retryExplanations: {
       "November 28th": "That’s the day I knew I loved you… and almost said it while drunk 💗",
       "December 12th": "That’s the day I almost said it sober 😅",
@@ -201,7 +219,7 @@ const questions = [ /* ⬅️ unchanged question data */
     }
   },
   {
-    q: "Why did last Valentine’s Day start badly?",
+    q: "Last Valentine's was amazing. But the day didn't start very well! Do you remember why? ",
     answers: [
       "I was sneezing all morning",
       "I lost your gift",
@@ -209,9 +227,11 @@ const questions = [ /* ⬅️ unchanged question data */
     ],
     correct: ["I was sneezing all morning"],
     reward: "“it could always be worse” – redeem for 30 minutes worth of tickling me unopposed... can be used all in one go, or spread across multiple days"
+    image: "",
+    feedbackImage: "" 
   },
   {
-    q: "What gift did I get for saving your life on my birthday?",
+    q: "I hate to bring it up but on my birthday last year I had to heroically save your life when you almost got hit by a car! But it was worth it, because I received a great gift from bossman in exchange! What was it?",
     answers: [
       "A jet lighter",
       "A pack of cigarettes",
@@ -219,27 +239,35 @@ const questions = [ /* ⬅️ unchanged question data */
     ],
     correct: ["A jet lighter"],
     reward: "“care package” – redeem for one care package delivered to you asap! tell me what you'd like and i'll order it straight to you - food, drinks, snacks, whatever it may be!"
+    image: "",
+    feedbackImage: "" 
   },
   {
-    q: "What was the first meal we cooked together?",
+    q: "We cooked dinner together quite a few times last year! But do you remember what the first thing we made together was?",
     answers: ["Salmon", "Chicken", "Mince beef"],
     correct: ["Salmon"],
     reward: "“chef’s choice” – redeem for a dinner cooked by yours truly, anything you'd like - but you can help too if you'd like!"
+    image: "",
+    feedbackImage: ""
   },
   {
-    q: "Where did we go for dessert after you met my sister?",
+    q: "Do you remember where we went for dessert after you met my sister for the first time?",
     answers: ["Black Tap", "Amorino", "Creams"],
     correct: ["Black Tap"],
     reward: "“baker’s choice” – redeem for a dessert made by yours truly, anything you'd like - but you can help too if you'd like!"
+    image: "",
+    feedbackImage: ""
   },
   {
-    q: "Who won mini golf on our 6-month anniversary?",
+    q: "We did a lot on our 6 month anniversary, including playing mini golf! Do you remember who won though?",
     answers: ["Both of us", "Me", "You"],
     correct: ["Both of us"],
     reward: "“I win.” – redeem during any kind of game, whether its just us, or if we're playing with others, for me to immediately start throwing and help you to win instead."
+    image: "",
+    feedbackImage: ""
   },
   {
-    q: "Which birthday view was your favourite?",
+    q: "On your birthday, we had some incredible views. Which one was your favourite though?",
     answers: [
       "Breakfast view",
       "Rooftop cinema",
@@ -251,21 +279,27 @@ const questions = [ /* ⬅️ unchanged question data */
       "Royal Albert Hall"
     ],
     reward: "“the best view is you” – redeem for one long distance dinner! i'll order us both food, and we have a dinner date together on video call!"
+    image: "",
+    feedbackImage: ""
   },
   {
-    q: "Who was the Bridgerton statue in Brighton?",
+    q: "Our Brighton trip was super fun (other than the spilt food incident...)! We went to the museum there, and outside of it there was a statue of a character from Bridgerton! Do you remember who?",
     answers: ["George IV", "Queen Charlotte", "George III"],
     correct: ["George IV"],
     reward: "“you should see me in a crown” – redeem for 1 hour of being Queen! I'll be your servant and we treat each other as such"
+    image: "",
+    feedbackImage: ""
   },
   {
-    q: "How many times did we go to Black Sheep?",
+    q: "I'll be shocked if you get this one, but take a guess! The place we went together the most last year was, by far and away, Black Sheep . But how many times did we go?",
     answers: ["87", "102", "65"],
     correct: ["87"],
     reward: "“breakfast time” – redeem for one breakfast (or lunch!) in bed - no need to get up to eat when the food can come to you!"
+    image: "",
+    feedbackImage: ""
   },
   {
-    q: "What happened on July 21st?",
+    q: "July 21st might seem like a very random date to you but is very distinct in my memories. What happened that night that made it so memorable?",
     answers: [
       "You asked me for an NSFW picture",
       "We had a fight",
@@ -273,15 +307,19 @@ const questions = [ /* ⬅️ unchanged question data */
     ],
     correct: ["You asked me for an NSFW picture"],
     reward: "“because we're both hot as fuck” – redeem for one XXX act of your choice"
+    image: "",
+    feedbackImage: ""
   },
   {
-    q: "What was the first karaoke song we sang?",
+    q: "Our one year anniversary happened a couple months ago! What was the first song we sung on karaoke? ",
     answers: ["Espresso", "Shake It Off", "Enemy"],
     correct: ["Espresso"],
     reward: "“throwback challenge” - redeem to recreate anything we've done in the last year! a specific date, or meal, moment, that you wanna relive"
+    image: "",
+    feedbackImage: ""
   },
   {
-    q: "Why did we go to bed early on Nov 24th?",
+    q: "On November 24th, despite sleeping all day, we still ended up going to bed early! Why?",
     answers: [
       "We passed out during a back massage",
       "Watching Love Island",
@@ -289,12 +327,15 @@ const questions = [ /* ⬅️ unchanged question data */
     ],
     correct: ["We passed out during a back massage"],
     reward: "“my back hurts” – redeem for one massage of your choice"
+    image: "",
+    feedbackImage: ""
   },
   {
     q: "What are we?",
     answers: ["The best!", "The best!", "The best!"],
     correct: ["The best!"],
     reward: "“best couple perks” – redeem for anything you'd like, whenever you'd like, wherever you'd like, whatever you'd like, because you're the best, and you deserve it 💗"
+    image: "",
   }
 ];
 
@@ -303,7 +344,6 @@ let won = [];
 let missed = [];
 let retrySameQuestion = false;
 
-// 🔀 SHUFFLE HELPER
 function shuffle(array) {
   return array
     .map(value => ({ value, sort: Math.random() }))
@@ -319,10 +359,20 @@ function startGame() {
 
 function loadQuestion() {
   const q = questions[index];
+
   document.getElementById("progress").innerText =
     `Memory ${index + 1} of ${questions.length} 💗`;
 
   document.getElementById("question").innerText = q.q;
+
+  const qImg = document.getElementById("questionImage");
+  if (q.image) {
+    qImg.src = q.image;
+    qImg.style.display = "block";
+  } else {
+    qImg.style.display = "none";
+  }
+
   const answersDiv = document.getElementById("answers");
   answersDiv.innerHTML = "";
 
@@ -340,25 +390,33 @@ function answer(choice) {
 
   if (q.retryExplanations && q.retryExplanations[choice]) {
     retrySameQuestion = true;
-    showFeedback(q.retryExplanations[choice]);
+    showFeedback(q.retryExplanations[choice], q.feedbackImage);
     return;
   }
 
   if (q.correct.includes(choice)) {
     won.push(q.reward);
     retrySameQuestion = false;
-    showFeedback(`Correct! You won: ${q.reward}`);
+    showFeedback(`Correct! You won: ${q.reward}`, q.feedbackImage);
   } else {
     missed.push(q.reward);
     retrySameQuestion = false;
-    showFeedback("Wrong...");
+    showFeedback("Wrong...", q.feedbackImage);
   }
 }
 
-function showFeedback(text) {
+function showFeedback(text, image) {
   document.getElementById("game").classList.remove("active");
   document.getElementById("feedback").classList.add("active");
   document.getElementById("feedbackText").innerText = text;
+
+  const img = document.getElementById("feedbackImage");
+  if (image) {
+    img.src = image;
+    img.style.display = "block";
+  } else {
+    img.style.display = "none";
+  }
 }
 
 function continueAfterFeedback() {
@@ -368,15 +426,16 @@ function continueAfterFeedback() {
 
   if (index >= questions.length) {
     document.getElementById("end").classList.add("active");
-    won.forEach(v => {
-  const title = v.split("–")[0].trim();
-  document.getElementById("won").innerHTML += `<li>${title}</li>`;
-});
 
-missed.forEach(v => {
-  const title = v.split("–")[0].trim();
-  document.getElementById("missed").innerHTML += `<li>${title}</li>`;
-});
+    won.forEach(v => {
+      const title = v.split("–")[0].trim();
+      document.getElementById("won").innerHTML += `<li>${title}</li>`;
+    });
+
+    missed.forEach(v => {
+      const title = v.split("–")[0].trim();
+      document.getElementById("missed").innerHTML += `<li>${title}</li>`;
+    });
   } else {
     document.getElementById("game").classList.add("active");
     loadQuestion();
